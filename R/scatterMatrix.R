@@ -11,7 +11,9 @@ scatterMatrix <- function(
     data = NULL,
     width = NULL, height = NULL
 ){
-
+    if (!inherits(data,'data.frame'))
+        stop("`data` must be a data.frame")
+    
   # forward options using x
   x = list(
       data = data
@@ -42,4 +44,4 @@ renderScatterMatrix <- function(expr, env = parent.frame(), quoted = FALSE) {
   shinyRenderWidget(expr, scatterMatrixOutput, env, quoted = TRUE)
 }
 
-scatterMatrix(data = iris)
+## scatterMatrix(data = iris)
