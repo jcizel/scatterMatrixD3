@@ -25,7 +25,7 @@ scatterMatrix <- function(
     x,
     width = width,
     height = height,
-    package = 'scatterMatrixdD3'
+    package = 'scatterMatrixD3'
   )
 }
 
@@ -33,7 +33,7 @@ scatterMatrix <- function(
 #'
 #' @export
 scatterMatrixOutput <- function(outputId, width = '100%', height = '400px'){
-  shinyWidgetOutput(outputId, 'scatterMatrix', width, height, package = 'scatterMatrixdD3')
+  shinyWidgetOutput(outputId, 'scatterMatrix', width, height, package = 'scatterMatrixD3')
 }
 
 #' Widget render function for use in Shiny

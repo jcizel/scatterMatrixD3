@@ -112,58 +112,58 @@ ScatterMatrix.prototype.render = function () {
 
 	var size_control = control.append('div').attr('class', 'scatter-matrix-size-control');
 	var color_control = control.append('div').attr('class', 'scatter-matrix-color-control');
-	// var filter_control = control.append('div').attr('class', 'scatter-matrix-filter-control');
-	// var variable_control = control.append('div').attr('class', 'scatter-matrix-variable-control');
-	// var drill_control = control.append('div').attr('class', 'scatter-matrix-drill-control');
+	var filter_control = control.append('div').attr('class', 'scatter-matrix-filter-control');
+	var variable_control = control.append('div').attr('class', 'scatter-matrix-variable-control');
+	var drill_control = control.append('div').attr('class', 'scatter-matrix-drill-control');
 
 	// shared control states
 	var to_include = self.__numeric_variables.slice(0, 5);
 	var color_variable = undefined;
-	// var selected_colors = undefined;
-	// var drill_variables = [];
+	var selected_colors = undefined;
+	var drill_variables = [];
 
-	// function set_filter(variable) {
-	//     filter_control.selectAll('*').remove();
-	//     if (variable) {
-	// 	// Get unique values for this variable
-	// 	var values = [];
-	// 	data.forEach(function(d) {
-	// 	    var v = d[variable];
-	// 	    if (values.indexOf(v) < 0) { values.push(v); }
-	// 	});
+	function set_filter(variable) {
+	    filter_control.selectAll('*').remove();
+	    if (variable) {
+		// Get unique values for this variable
+		var values = [];
+		data.forEach(function(d) {
+		    var v = d[variable];
+		    if (values.indexOf(v) < 0) { values.push(v); }
+		});
 
-	// 	selected_colors = values.slice(0, 5);
+		selected_colors = values.slice(0, 5);
 
-	// 	var filter_li =
-	// 	    filter_control
-	// 	    .append('p').text('Filter by '+variable+': ')
-	// 	    .append('ul')
-	// 	    .selectAll('li')
-	// 	    .data(values)
-	// 	    .enter().append('li');
+		var filter_li =
+		    filter_control
+		    .append('p').text('Filter by '+variable+': ')
+		    .append('ul')
+		    .selectAll('li')
+		    .data(values)
+		    .enter().append('li');
 
-	// 	filter_li.append('input')
-        //             .attr('type', 'checkbox')
-        //             .attr('checked', function(d, i) {
-	// 		if (selected_colors.indexOf(d) >= 0)
-	// 		    return 'checked';
-	// 		return null;
-        //             })
-        //             .on('click', function(d, i) {
-	// 		var new_selected_colors = [];
-	// 		for (var j in selected_colors) {
-	// 		    var v = selected_colors[j];
-	// 		    if (v !== d || this.checked) { new_selected_colors.push(v); } 
-	// 		}
-	// 		if (this.checked) { new_selected_colors.push(d); }
-	// 		selected_colors = new_selected_colors;
-	// 		self.__draw(self.__cell_size, svg, color_variable,
-        //                             selected_colors, to_include, drill_variables);
-        //             });
-	// 	filter_li.append('label')
-        //             .html(function(d) { return d; });
-	//     }
-	// }
+		filter_li.append('input')
+                    .attr('type', 'checkbox')
+                    .attr('checked', function(d, i) {
+			if (selected_colors.indexOf(d) >= 0)
+			    return 'checked';
+			return null;
+                    })
+                    .on('click', function(d, i) {
+			var new_selected_colors = [];
+			for (var j in selected_colors) {
+			    var v = selected_colors[j];
+			    if (v !== d || this.checked) { new_selected_colors.push(v); } 
+			}
+			if (this.checked) { new_selected_colors.push(d); }
+			selected_colors = new_selected_colors;
+			self.__draw(self.__cell_size, svg, color_variable,
+                                    selected_colors, to_include, drill_variables);
+                    });
+		filter_li.append('label')
+                    .html(function(d) { return d; });
+	    }
+	}
 
 	size_a = size_control.append('p').text('Change plot size: ');
 	size_a.append('a')
@@ -171,8 +171,7 @@ ScatterMatrix.prototype.render = function () {
             .html('-')
             .on('click', function() {
 		self.__cell_size *= 0.75;
-		// self.__draw(self.__cell_size, svg, color_variable, selected_colors, to_include, drill_variables);
-		self.__draw(self.__cell_size, svg, color_variable, selected_colors, to_include);
+		self.__draw(self.__cell_size, svg, color_variable, selected_colors, to_include, drill_variables);
             });
 	size_a.append('span').html('&nbsp;');
 	size_a.append('a')
@@ -180,8 +179,7 @@ ScatterMatrix.prototype.render = function () {
             .html('+')
             .on('click', function() {
 		self.__cell_size *= 1.25;
-		// self.__draw(self.__cell_size, svg, color_variable, selected_colors, to_include, drill_variables);
-		self.__draw(self.__cell_size, svg, color_variable, selected_colors, to_include);
+		self.__draw(self.__cell_size, svg, color_variable, selected_colors, to_include, drill_variables);
             });
 
 	color_control.append('p').text('Select a variable to color:');
@@ -195,69 +193,66 @@ ScatterMatrix.prototype.render = function () {
             .text(function(d) { return d ? d : 'None'; })
             .on('click', function(d, i) {
 		color_variable = d;
-		// set_filter(d);
-		// self.__draw(self.__cell_size, svg, color_variable, selected_colors, to_include, drill_variables);
-		self.__draw(self.__cell_size, svg, color_variable, selected_colors, to_include);
+		set_filter(d);
+		self.__draw(self.__cell_size, svg, color_variable, selected_colors, to_include, drill_variables);
             });
 
-	// var variable_li =
-	//     variable_control
-        //     .append('p').text('Include variables: ')
-        //     .append('ul')
-        //     .selectAll('li')
-        //     .data(self.__numeric_variables)
-        //     .enter().append('li');
+	var variable_li =
+	    variable_control
+            .append('p').text('Include variables: ')
+            .append('ul')
+            .selectAll('li')
+            .data(self.__numeric_variables)
+            .enter().append('li');
 
-	// variable_li.append('input')
-        //     .attr('type', 'checkbox')
-        //     .attr('checked', function(d, i) { if (to_include.indexOf(d) >= 0) return "checked"; return null; })
-        //     .on('click', function(d, i) {
-        //         var new_to_include = [];
-        //         for (var j in to_include) {
-        //             var v = to_include[j];
-        //             if (v !== d || this.checked) { new_to_include.push(v); } 
-        //         }
-        //         if (this.checked) { new_to_include.push(d); }
-        //         to_include = new_to_include;
-        //         self.__draw(self.__cell_size, svg, color_variable, selected_colors, to_include, drill_variables);
-        //     });
-	// variable_li.append('label')
-        //     .html(function(d) {
-        //         var i = self.__numeric_variables.indexOf(d)+1;
-        //         return ''+i+': '+d;
-        //     });
+	variable_li.append('input')
+            .attr('type', 'checkbox')
+            .attr('checked', function(d, i) { if (to_include.indexOf(d) >= 0) return "checked"; return null; })
+            .on('click', function(d, i) {
+                var new_to_include = [];
+                for (var j in to_include) {
+                    var v = to_include[j];
+                    if (v !== d || this.checked) { new_to_include.push(v); } 
+                }
+                if (this.checked) { new_to_include.push(d); }
+                to_include = new_to_include;
+                self.__draw(self.__cell_size, svg, color_variable, selected_colors, to_include, drill_variables);
+            });
+	variable_li.append('label')
+            .html(function(d) {
+                var i = self.__numeric_variables.indexOf(d)+1;
+                return ''+i+': '+d;
+            });
 
-	// drill_li = 
-	//     drill_control
-        //     .append('p').text('Drill and Expand: ')
-        //     .append('ul')
-        //     .selectAll('li')
-        //     .data(original_numeric_variables.concat(string_variables))
-        //     .enter().append('li');
+	drill_li = 
+	    drill_control
+            .append('p').text('Drill and Expand: ')
+            .append('ul')
+            .selectAll('li')
+            .data(original_numeric_variables.concat(string_variables))
+            .enter().append('li');
 
-	// drill_li.append('input')
-        //     .attr('type', 'checkbox')
-        //     .on('click', function(d, i) {
-	// 	var new_drill_variables = [];
-	// 	for (var j in drill_variables) {
-        //             var v = drill_variables[j];
-        //             if (v !== d || this.checked) { new_drill_variables.push(v); } 
-	// 	}
-	// 	if (this.checked) { new_drill_variables.push(d); }
-	// 	drill_variables = new_drill_variables;
-	// 	self.__draw(self.__cell_size, svg, color_variable, selected_colors, to_include, drill_variables);
-        //     });
-	// drill_li.append('label')
-        //     .html(function(d) { return d; });
+	drill_li.append('input')
+            .attr('type', 'checkbox')
+            .on('click', function(d, i) {
+		var new_drill_variables = [];
+		for (var j in drill_variables) {
+                    var v = drill_variables[j];
+                    if (v !== d || this.checked) { new_drill_variables.push(v); } 
+		}
+		if (this.checked) { new_drill_variables.push(d); }
+		drill_variables = new_drill_variables;
+		self.__draw(self.__cell_size, svg, color_variable, selected_colors, to_include, drill_variables);
+            });
+	drill_li.append('label')
+            .html(function(d) { return d; });
 
-	// self.__draw(self.__cell_size, svg, color_variable, selected_colors, to_include, drill_variables);
-	self.__draw(self.__cell_size, svg, color_variable, selected_colors, to_include);
+	self.__draw(self.__cell_size, svg, color_variable, selected_colors, to_include, drill_variables);
     });
 };
 
 ScatterMatrix.prototype.__draw =
-    function(cell_size, container_el, color_variable, selected_colors, to_include){
-    // function(cell_size, container_el, color_variable, selected_colors, to_include, drill_variables){
+    function(cell_size, container_el, color_variable, selected_colors, to_include, drill_variables){
     var self = this;
     this.onData(function() {
 	var data = self.__data;
@@ -319,58 +314,58 @@ ScatterMatrix.prototype.__draw =
 	// contains only data points that match specific values for each of the
 	// drilled variables other than the first.
 
-	// var drill_values = [];
-	// var drill_degrees = []
-	// drill_variables.forEach(function(variable) {
-	//     // Skip first one, since that's just the x axis
-	//     if (drill_values.length == 0) {
-	// 	drill_values.push([]);
-	// 	drill_degrees.push(1);
-	//     }
-	//     else {
-	// 	var values = [];
-	// 	data.forEach(function(d) {
-	// 	    var v = d[variable];
-	// 	    if (v !== undefined && values.indexOf(v) < 0) { values.push(v); }
-	// 	});
-	// 	values.sort();
-	// 	drill_values.push(values);
-	// 	drill_degrees.push(values.length);
-	//     }
-	// });
-	// var total_columns = 1;
-	// drill_degrees.forEach(function(d) { total_columns *= d; });
+	var drill_values = [];
+	var drill_degrees = []
+	drill_variables.forEach(function(variable) {
+	    // Skip first one, since that's just the x axis
+	    if (drill_values.length == 0) {
+		drill_values.push([]);
+		drill_degrees.push(1);
+	    }
+	    else {
+		var values = [];
+		data.forEach(function(d) {
+		    var v = d[variable];
+		    if (v !== undefined && values.indexOf(v) < 0) { values.push(v); }
+		});
+		values.sort();
+		drill_values.push(values);
+		drill_degrees.push(values.length);
+	    }
+	});
+	var total_columns = 1;
+	drill_degrees.forEach(function(d) { total_columns *= d; });
 
 	// Pick out stuff to draw on horizontal and vertical dimensions
 
-	// if (drill_variables.length > 0) {
-	//     // First drill is now the x-axis variable for all columns
-	//     x_variables = [];
-	//     for (var i=0; i<total_columns; i++) {
-	// 	x_variables.push(drill_variables[0]);
-	//     }
-	// }
-	// else
-	//     x_variables = variables_to_draw.slice(0);
+	if (drill_variables.length > 0) {
+	    // First drill is now the x-axis variable for all columns
+	    x_variables = [];
+	    for (var i=0; i<total_columns; i++) {
+		x_variables.push(drill_variables[0]);
+	    }
+	}
+	else
+	    x_variables = variables_to_draw.slice(0);
 
 	x_variables = variables_to_draw.slice(0);
 
-	// if (drill_variables.length > 0) {
-	//     // Don't draw any of the "drilled" variables in vertical dimension
-	//     y_variables = [];
-	//     variables_to_draw.forEach(function(variable) {
-	// 	if (drill_variables.indexOf(variable) < 0) { y_variables.push(variable); }
-	//     });
-	// }
-	// else
-	//     y_variables = variables_to_draw.slice(0);
+	if (drill_variables.length > 0) {
+	    // Don't draw any of the "drilled" variables in vertical dimension
+	    y_variables = [];
+	    variables_to_draw.forEach(function(variable) {
+		if (drill_variables.indexOf(variable) < 0) { y_variables.push(variable); }
+	    });
+	}
+	else
+	    y_variables = variables_to_draw.slice(0);
 
 	y_variables = variables_to_draw.slice(0);
 	y_variables = y_variables.reverse();
-	// var filter_descriptions = 0;
-	// if (drill_variables.length > 1) {
-	//     filter_descriptions = drill_variables.length-1;
-	// }
+	var filter_descriptions = 0;
+	if (drill_variables.length > 1) {
+	    filter_descriptions = drill_variables.length-1;
+	}
 
 	// Formatting for axis
 	var intf = d3.format('d');
@@ -487,34 +482,34 @@ ScatterMatrix.prototype.__draw =
 	    // this column.
 	    //
 	    var filter = {};
-	    // if (drill_variables.length > 1) {
-	    // 	var column = p.i;
+	    if (drill_variables.length > 1) {
+	    	var column = p.i;
 
-	    // 	var cap = 1;
-	    // 	for (var i=drill_variables.length-1; i > 0; i--) {
-	    // 	    var var_name = drill_variables[i];
-	    // 	    var var_value = undefined;
+	    	var cap = 1;
+	    	for (var i=drill_variables.length-1; i > 0; i--) {
+	    	    var var_name = drill_variables[i];
+	    	    var var_value = undefined;
 
-	    // 	    if (i == drill_variables.length-1) {
-	    // 		// for the last drill variable, we index by %
-	    // 		var_value = drill_values[i][column % drill_degrees[i]];
-	    // 	    }
-	    // 	    else {
-	    // 		// otherwise divide by capacity of subsequent variables to get value array index
-	    // 		var_value = drill_values[i][parseInt(column/cap)];
-	    // 	    }
+	    	    if (i == drill_variables.length-1) {
+	    		// for the last drill variable, we index by %
+	    		var_value = drill_values[i][column % drill_degrees[i]];
+	    	    }
+	    	    else {
+	    		// otherwise divide by capacity of subsequent variables to get value array index
+	    		var_value = drill_values[i][parseInt(column/cap)];
+	    	    }
 
-	    // 	    filter[var_name] = var_value;
-	    // 	    cap *= drill_degrees[i];
-	    // 	}
+	    	    filter[var_name] = var_value;
+	    	    cap *= drill_degrees[i];
+	    	}
 
-	    // 	data_to_draw = [];
-	    // 	data.forEach(function(d) {
-	    // 	    var pass = true;
-	    // 	    for (k in filter) { if (d[k] != filter[k]) { pass = false; break; } }
-	    // 	    if (pass === true) { data_to_draw.push(d); }
-	    // 	});
-	    // }
+	    	data_to_draw = [];
+	    	data.forEach(function(d) {
+	    	    var pass = true;
+	    	    for (k in filter) { if (d[k] != filter[k]) { pass = false; break; } }
+	    	    if (pass === true) { data_to_draw.push(d); }
+	    	});
+	    }
 
 	    var cell = d3.select(this);
 
@@ -547,17 +542,17 @@ ScatterMatrix.prototype.__draw =
 			return shorten(s);
 		    });
 
-		// if (drill_variables.length > 1) {
-		//     var i = 0;
-		//     for (k in filter) {
-		// 	i += 1;
-		// 	cell.append("svg:text")
-		// 	    .attr("x", padding)
-		// 	    .attr("y", size+axis_height+label_height*i)
-		// 	    .attr("dy", ".71em")
-		// 	    .text(function(d) { return shorten(filter[k]+': '+k); });
-		//     }
-		// }
+		if (drill_variables.length > 1) {
+		    var i = 0;
+		    for (k in filter) {
+			i += 1;
+			cell.append("svg:text")
+			    .attr("x", padding)
+			    .attr("y", size+axis_height+label_height*i)
+			    .attr("dy", ".71em")
+			    .text(function(d) { return shorten(filter[k]+': '+k); });
+		    }
+		}
 	    }
 
 	    // Brush

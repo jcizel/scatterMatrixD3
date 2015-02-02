@@ -4,7 +4,7 @@ dependencies:
    src: htmlwidgets
    script: d3.min.js
  - name: scatter-matrix
-   version: 1.2.0
+   version: 1.0.0
    src: htmlwidgets
-   script: scatter-matrix-2.js
+   script: scatter-matrix.js
    stylesheet: scatter-matrix.css
