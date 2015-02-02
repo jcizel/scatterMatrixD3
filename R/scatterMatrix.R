@@ -1,9 +1,11 @@
-#' <Add Title>
+#' D3 scatterplot matrix
 #'
-#' <Add Description>
-#'
+#' This is a wrapper around the D3 scatterplot matrix, originally developed by
+#' Mike Bostock and extended by Benjie Chen.
+#' @param data data.frame containing the data  
+#' @param width 
+#' @param height 
 #' @import htmlwidgets
-#'
 #' @export
 scatterMatrix <- function(
     data = NULL,
